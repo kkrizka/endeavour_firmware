@@ -1,0 +1,8 @@
+# Generic backup files
+*~
+
+# Vivado files
+.Xil/
+*.log
+*.jou
+*.str

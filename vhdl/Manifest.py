@@ -1,0 +1,1 @@
+files = [ 'endeavoureos.vhd' ]
