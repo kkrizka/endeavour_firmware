@@ -62,26 +62,24 @@ set period 25.
 
 add_force {/tb_endeavour/clock} {1 0ns} "0 [expr ${period}/2]ns" -repeat_every ${period}ns
 add_force {/tb_endeavour/reset} {0 0ns} {1 100ns} {0 500ns}
-set time 500.
 
 # Initial values
 add_force {/tb_endeavour/inst_eos/datain}  0 0ns
 add_force {/tb_endeavour/inst_eos/nbitsin} 0 0ns
 
-# Wait 512 clock cycles to reset AMAC FSM
-set time [expr ${time} + 512*${period}]
+run [expr 512*${period}]ns
 
 # Run SETID
 set cmdword [endeavour_setid 10101 [string repeat 1 20] 00000]
-add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} ${time}ns
-add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] ${time}ns
-add_force {/tb_endeavour/inst_eos/send} 1 ${time}ns -cancel_after [expr ${time} + ${period}]
+add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} 0ns
+add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] 0ns
+add_force {/tb_endeavour/inst_eos/send} 1 ${period}ns -cancel_after [expr 2*${period}]
 
 # Wait
-set time [expr ${time} + 512*${period}]
+run 200us
 
 # Run WRITE
 set cmdword [endeavour_write 10101 00000001 D34DB347]
-add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} ${time}ns
-add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] ${time}ns
-add_force {/tb_endeavour/inst_eos/send} 1 ${time}ns -cancel_after [expr ${time} + ${period}]
+add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} 0ns
+add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] 0ns
+add_force {/tb_endeavour/inst_eos/send} 1 ${period}ns -cancel_after [expr 2*${period}]
