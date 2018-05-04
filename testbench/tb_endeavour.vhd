@@ -35,17 +35,14 @@ architecture behavioural of tb_endeavour is
       clock       : in  std_logic;
       reset       : in  std_logic;
       busy        : out std_logic;
-      amac        : in  std_logic_vector( 4 downto 0);
-      addr        : in  std_logic_vector( 7 downto 0);
-      wdata       : in  std_logic_vector(55 downto 0);
-      rdata       : out std_logic_vector(31 downto 0);
-      efuseid     : in  std_logic_vector(19 downto 0);
-      idpads      : in  std_logic_vector( 4 downto 0);
-      istrobe     : in  std_logic;
-      wstrobe     : in  std_logic;
-      rstrobe     : in  std_logic;
+      error       : out std_logic;
+      datain      : in  std_logic_vector(63 downto 0);
+      nbitsin     : in  integer range 0 to 63;
+      dataout     : out std_logic_vector(63 downto 0);
+      nbitsout    : out integer range 0 to 63;
+      send        : in  std_logic;
       serialin    : in  std_logic;
-      serialout   : out std_logic     
+      serialout   : out std_logic
       );
   end component endeavoureos;
 
@@ -70,18 +67,15 @@ begin
 
   inst_eos : endeavoureos
     port map(
-      clock => clock,
-      reset => reset,
+      clock     => clock,
+      reset     => reset,
 
-      amac => (others => '0'),
-      addr => (others => '0'),
-      wdata => (others => '0'),
-      efuseid => (others => '1'),
-      idpads => (others => '0'),
-      istrobe => '0',
-      wstrobe => '0',
-      rstrobe => '0',
-      serialin => serial0,
+      send      => '0',
+      
+      datain    => (others => '0'),
+      nbitsin   => 0,
+
+      serialin  => serial0,
       serialout => serial1
       );
   
