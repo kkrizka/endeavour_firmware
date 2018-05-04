@@ -7,13 +7,15 @@ entity endeavoureos is
     reset       : in  std_logic;
 
     -- control signals
-    busy        : out std_logic;
-    error       : out std_logic;
     nbitsin     : in  integer range 0 to 63;    
     datain      : in  std_logic_vector(63 downto 0);
+    send        : in  std_logic;
+    busy        : out std_logic;
+    
     nbitsout    : out integer range 0 to 63;
     dataout     : out std_logic_vector(63 downto 0);
-    send        : in  std_logic;
+    datavalid   : out std_logic;
+    error       : out std_logic;    
 
     -- serial signals
     serialin    : in  std_logic;
@@ -30,10 +32,20 @@ architecture behavioural of endeavoureos is
   
   signal reg_nbitsin    : integer range 0 to 63         := 0;  
   signal reg_datain     : std_logic_vector(63 downto 0) := (others => '0');
+  signal reg_busy       : std_logic;
 
   signal reg_nbitsout   : integer range 0 to 63         := 0;  
   signal reg_dataout    : std_logic_vector(63 downto 0) := (others => '0');
+  signal reg_datavalid  : std_logic;
+  signal reg_error      : std_logic;
 begin
+  busy          <= reg_busy;
+  datavalid     <= reg_datavalid;
+  error         <= reg_error;
+
+  nbitsout      <= reg_nbitsout;
+  dataout       <= reg_dataout;
+
   --
   -- The FSM for writing data to AMAC
   --  
@@ -46,8 +58,9 @@ begin
         fsm_wr                  <= idle;
         reg_nbitsin             <= 0;
         reg_datain              <= (others => '0');
+        busy                    <= '0';
         counter                 := 0;
-        serialout               <= 'U';
+        serialout               <= '0';
       else
         case fsm_wr is
           when idle =>
@@ -57,8 +70,10 @@ begin
               -- latch data to send
               reg_datain        <= datain;
               reg_nbitsin       <= nbitsin;
+              reg_busy          <= '1';
               fsm_wr            <= senddata;
             else
+              reg_busy          <= '0';
               fsm_wr            <= idle;
             end if;
 
@@ -104,10 +119,9 @@ begin
   end process;
 
   --
-  -- The FSM for receiving data to AMAC
+  -- The FSM for receiving data from AMAC
   --
   process (clock)
-    variable writebit   : std_logic;
     variable counter    : integer range 0 to 127        := 0;
   begin
     if rising_edge(clock) then
@@ -115,6 +129,8 @@ begin
         fsm_rd                  <= idle;
         reg_nbitsout            <= 0;
         reg_dataout             <= (others => '0');
+        reg_datavalid           <= '0';
+        reg_error               <= '0';
         counter                 := 0;
       else
         case fsm_rd is
@@ -123,6 +139,8 @@ begin
               counter           := 1;
               reg_nbitsout      <= 0;
               reg_dataout       <= (others => '0');
+              reg_datavalid     <= '0';
+              reg_error         <= '0';
               fsm_rd            <= waitbit;
             else
               fsm_rd            <= idle;
@@ -141,7 +159,8 @@ begin
             elsif (29 < counter) and (counter < 124) then
               reg_dataout       <= reg_dataout(62 downto 0) & '1';
             else
-              -- TODO: Implement error?
+              reg_dataout       <= reg_dataout(62 downto 0) & 'U';
+              reg_error         <= '1';
             end if;
             counter             := 0;
             reg_nbitsout        <= reg_nbitsout + 1;
@@ -154,6 +173,7 @@ begin
             else
               counter           := counter + 1;
               if counter>75 then
+                reg_datavalid   <= '1';
                 fsm_rd          <= idle;
               end if;
             end if;

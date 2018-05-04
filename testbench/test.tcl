@@ -73,7 +73,15 @@ set time [expr ${time} + 512*${period}]
 
 # Run SETID
 set cmdword [endeavour_setid 10101 [string repeat 1 20] 00000]
+add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} ${time}ns
+add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] ${time}ns
+add_force {/tb_endeavour/inst_eos/send} 1 ${time}ns -cancel_after [expr ${time} + ${period}]
 
+# Wait
+set time [expr ${time} + 512*${period}]
+
+# Run WRITE
+set cmdword [endeavour_write 10101 00000001 D34DB347]
 add_force {/tb_endeavour/inst_eos/datain}  ${cmdword} ${time}ns
 add_force {/tb_endeavour/inst_eos/nbitsin} -radix dec [string length ${cmdword}] ${time}ns
 add_force {/tb_endeavour/inst_eos/send} 1 ${time}ns -cancel_after [expr ${time} + ${period}]

@@ -2,7 +2,6 @@ proc endeavour_crc {word} {
     set revword [string reverse ${word}]
     set crc ""
     for {set i 7} {${i} >=0 } {incr i -1} {
-	puts "bit i = ${i}"
 	set crcbit [expr [string index ${revword} [expr 8*0+${i}]] ^ \
 		    [string index ${revword} [expr 8*1+${i}]] ^ \
 		    [string index ${revword} [expr 8*2+${i}]] ^ \
@@ -24,6 +23,20 @@ proc endeavour_setid {newamacid efuseid idpads} {
     append cmdword ${efuseid}   ;# euseid
     append cmdword 111          ;# pad
     append cmdword ${idpads}    ;# idpads
+    append cmdword [endeavour_crc ${cmdword}] ;# CRC
+    return ${cmdword}
+}
+
+proc endeavour_write {amacid addr data} {
+    binary scan [binary format H* ${data}] B* data
+    puts ${data}
+
+    #3’b111, amacid[4:0], addr[7:0], data[31:0], crc[7:0]
+    set cmdword "111"           ;# command
+    append cmdword ${amacid}    ;# amacid
+    append cmdword ${addr}      ;# address
+    append cmdword ${data}      ;# data
+    #puts ${cmdword}
     append cmdword [endeavour_crc ${cmdword}] ;# CRC
     return ${cmdword}
 }
