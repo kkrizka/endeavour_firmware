@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity endeavoureos is
+entity endeavour_master is
   port (
     clock       : in  std_logic;
     reset       : in  std_logic;
@@ -21,9 +21,9 @@ entity endeavoureos is
     serialin    : in  std_logic;
     serialout   : out std_logic
     );
-end entity endeavoureos;
+end entity endeavour_master;
 
-architecture behavioural of endeavoureos is
+architecture behavioural of endeavour_master is
   type fsm_wr_t is (idle, senddata, sendbit, sendgap);
   signal fsm_wr : fsm_wr_t := idle;
 

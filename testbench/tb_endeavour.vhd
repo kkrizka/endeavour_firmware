@@ -49,7 +49,7 @@ architecture behavioural of tb_endeavour is
       );
   end component endeavour;
 
-  component endeavoureos is
+  component endeavour_master is
     port (
       clock       : in  std_logic;
       reset       : in  std_logic;
@@ -64,7 +64,7 @@ architecture behavioural of tb_endeavour is
       serialin    : in  std_logic;
       serialout   : out std_logic
       );
-  end component endeavoureos;
+  end component endeavour_master;
 
   --
   -- Signals
@@ -123,7 +123,7 @@ begin
       rdata     => rdata
       );
 
-  inst_eos : endeavoureos
+  inst_eos : endeavour_master
     port map(
       clock     => clock,
       reset     => reset,

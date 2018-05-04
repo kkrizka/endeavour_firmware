@@ -1,1 +1,1 @@
-files = [ 'endeavoureos.vhd' ]
+files = [ 'endeavour_master.vhd' ]
