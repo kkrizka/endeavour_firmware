@@ -15,7 +15,7 @@ proc endeavour_crc {word} {
 
 proc endeavour_setid {newamacid efuseid idpads} {
     #3,b110, 5’b11111, 3’b111, newamacid[4:0], 4’b1111, efuseid[19:0], 3’b111, idpads[4:0], crc[7:0]
-    set cmdword "110"           ;# command
+    set cmdword "110"           ;# SETID
     append cmdword 11111        ;# pad
     append cmdword 111          ;# pad
     append cmdword ${newamacid} ;# newamacid
@@ -32,11 +32,18 @@ proc endeavour_write {amacid addr data} {
     puts ${data}
 
     #3’b111, amacid[4:0], addr[7:0], data[31:0], crc[7:0]
-    set cmdword "111"           ;# command
+    set cmdword "111"           ;# WRITE
     append cmdword ${amacid}    ;# amacid
     append cmdword ${addr}      ;# address
     append cmdword ${data}      ;# data
-    #puts ${cmdword}
     append cmdword [endeavour_crc ${cmdword}] ;# CRC
+    return ${cmdword}
+}
+
+proc endeavour_read {amacid addr} {
+    #3’b101, amacid[4:0], addr[7:0]
+    set cmdword "101"           ;# READ
+    append cmdword ${amacid}    ;# amacid
+    append cmdword ${addr}      ;# address
     return ${cmdword}
 }

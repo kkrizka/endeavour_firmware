@@ -58,7 +58,7 @@ begin
         fsm_wr                  <= idle;
         reg_nbitsin             <= 0;
         reg_datain              <= (others => '0');
-        busy                    <= '0';
+        reg_busy                <= '0';
         counter                 := 0;
         serialout               <= '0';
       else
