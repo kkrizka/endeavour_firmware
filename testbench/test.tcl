@@ -19,9 +19,14 @@ add_wave {{/tb_endeavour/inst_eos/error}}
 add_wave {{/tb_endeavour/inst_eos/send}}
 add_wave {{/tb_endeavour/inst_eos/nbitsin}}
 add_wave {{/tb_endeavour/inst_eos/datain}}
-add_wave {{/tb_endeavour/inst_eos/fsm}}
+add_wave {{/tb_endeavour/inst_eos/fsm_wr}}
 add_wave {{/tb_endeavour/inst_eos/reg_nbitsin}}
 add_wave {{/tb_endeavour/inst_eos/reg_datain}}
+add_wave {{/tb_endeavour/inst_eos/nbitsout}}
+add_wave {{/tb_endeavour/inst_eos/dataout}}
+add_wave {{/tb_endeavour/inst_eos/fsm_rd}}
+add_wave {{/tb_endeavour/inst_eos/reg_nbitsout}}
+add_wave {{/tb_endeavour/inst_eos/reg_dataout}}
 
 add_wave_divider AMAC 
 add_wave {{/tb_endeavour/inst_amac/clk}}
