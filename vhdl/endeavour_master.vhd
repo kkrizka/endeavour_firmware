@@ -16,7 +16,6 @@ use ieee.std_logic_1164.all;
 -- serialout - The data sent to the the Endeavour slave
 --
 --Transfer ports
---
 -- nbitsin - Number of bits to transfer from the datain
 -- datain - The data to transfer. The least significant nbitsin will be send, starting with bit at nbitsin-1.
 -- send - Pulse to send data stored in datain.
