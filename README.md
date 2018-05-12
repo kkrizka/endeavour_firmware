@@ -9,7 +9,7 @@ svn co svn+ssh://svn.cern.ch/reps/itkstrasic/AMACv2/trunk
 An implementation of the Endeavour master is available in `vhdl/endeavour_master.vhd`.
 
 ## endeavour_master interface
-The endeavour_master entity is very dumb, with the software responsible for most of the work. It acts only as a (de)serializer for the morse code, with the Tx and Rx parts kept separate. This is to keep it simple and generic.
+The endeavour_master entity is very dumb, with the software responsible for most of the work. It acts only as a (de)serializer for the morse code, with the Tx and Rx parts kept almost completely separate. The only interaction is that the send command also clears the datavalid flag.
 
 
 Generic ports
@@ -27,7 +27,7 @@ Transfer ports
 Receive ports
 * `nbitsout` - Number of valid bits received from the slave.
 * `dataout` - The data recieved from the slave, stored in the `nbitsout` least significant bits. The bit at `nbitsout-1` was recieved first.
-* `datavalid` - High signal indicates that `dataout` contains valid and complete data. Goes low after reset and when a new word is being serialized.
+* `datavalid` - High signal indicates that `dataout` contains valid and complete data. Goes low after reset,when a new word is being serialized and when data was sent.
 * `error` - Inidicates an error condition during serialization of `serialin`. Currently only the length of a pulse must be in  the specified number of clock cycles.
 
 The component declaration is below.

@@ -7,7 +7,8 @@ use ieee.std_logic_1164.all;
 --
 -- Entity responsible for acting as a master in the Endeavour protocol. The entity is very dumb, with the
 -- software responsible for most of the work. It acts only as a (de)serializer for the morse code. The Tx
--- and Rx parts kept separate. This is to keep it simple and generic.
+-- and Rx parts are kept almost competely separate. The only interaction is
+-- that the send command also clears the datavalid flag.
 --
 --Generic ports
 -- clock - Clock used for internal logic and to time the serial line (nominal 80 MHz)
@@ -24,7 +25,7 @@ use ieee.std_logic_1164.all;
 --Receive ports
 -- nbitsout - Number of valid bits received from the slave.
 -- dataout - The data recieved from the slave, stored in the nbitsout least significant bits. The bit at nbitsout-1 was recieved first.
--- datavalid - High signal indicates that dataout contains valid and complete data. Goes low after reset and when a new word is being serialized.
+-- datavalid - High signal indicates that dataout contains valid and complete data. Goes low after reset,when a new word is being serialized and when data was sent.
 -- error - Inidicates an error condition during serialization of serialin. Currently only the length of a pulse must be in the specified number of clock cycles.
 ----
 entity endeavour_master is
@@ -37,7 +38,7 @@ entity endeavour_master is
     datain      : in  std_logic_vector(63 downto 0);
     send        : in  std_logic;
     busy        : out std_logic;
-    
+
     nbitsout    : out integer range 0 to 63;
     dataout     : out std_logic_vector(63 downto 0);
     datavalid   : out std_logic;
@@ -169,6 +170,7 @@ begin
               reg_error         <= '0';
               fsm_rd            <= waitbit;
             else
+              reg_datavalid     <= reg_datavalid and not send;
               fsm_rd            <= idle;
             end if;
 
